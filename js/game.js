@@ -30,5 +30,5 @@ function draw(){
         getTile(i,j).draw();
       }
     }
-    drawSprite(0, x, y);
+    player.draw();
 }
