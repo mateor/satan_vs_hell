@@ -4,22 +4,28 @@ class Monster{
         this.sprite = sprite;
         this.hp = hp;
   }
-    update(){
-        this.doStuff();
+  heal(damage){
+      this.hp = Math.min(maxHp, this.hp+damage);
+  }
+  update(){
+    if(this.stunned){
+      this.stunned = false;
+      return;
     }
+    this.doStuff();
+  }
 
-    doStuff(){
-       let neighbors = this.tile.getAdjacentPassableNeighbors();
-       
-       neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
+  doStuff(){
+     let neighbors = this.tile.getAdjacentPassableNeighbors();
+     
+     neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
 
-       if(neighbors.length){
-           neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
-           let newTile = neighbors[0];
-           this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
-       }
-    }
-
+     if(neighbors.length){
+         neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+         let newTile = neighbors[0];
+         this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+     }
+  }
 
   draw(){
     drawSprite(this.sprite, this.tile.x, this.tile.y);
@@ -43,6 +49,8 @@ class Monster{
               this.move(newTile);
           }else{
               if(this.isPlayer != newTile.monster.isPlayer){
+                  this.attackedThisTurn = true;
+                  newTile.monster.stunned = true;
                   newTile.monster.hit(1);
               }
           }
@@ -88,26 +96,56 @@ class Bat extends Monster{
     }
 }
 
-class Plageuopuss extends Monster{
+class Tank extends Monster{
     constructor(tile){
-        super(tile, 5, 1);
+        super(tile, 5, 2);
+    }
+    update(){
+        let startedStunned = this.stunned;
+        super.update();
+        if(!startedStunned){
+            this.stunned = true;
+        }
     }
 }
 
-class Blob extends Monster{
+class Eater extends Monster{
     constructor(tile){
-        super(tile, 6, 2);
+        super(tile, 6, 1);
+    }
+    doStuff(){
+        let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
+        if(neighbors.length){
+            neighbors[0].replace(Floor);
+            this.heal(0.5);
+        }else{
+            super.doStuff();
+        }
     }
 }
 
-class ElderMouth extends Monster{
+class Snake extends Monster{
     constructor(tile){
         super(tile, 7, 1);
     }
+    doStuff(){
+        this.attackedThisTurn = false;
+        super.doStuff();
+
+        if(!this.attackedThisTurn){
+            super.doStuff();
+        }
+    }
 }
 
-class BonesOfSatan extends Monster{
+class Bones extends Monster{
     constructor(tile){
         super(tile, 8, 2);
+    }
+    doStuff(){
+        let neighbors = this.tile.getAdjacentPassableNeighbors();
+        if(neighbors.length){
+            this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
+        }
     }
 }

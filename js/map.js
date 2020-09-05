@@ -56,7 +56,7 @@ function generateMonsters(){
 }
 
 function spawnMonster(){
-    let monsterType = shuffle([Bat, Plageuopuss, Blob, ElderMouth, BonesOfSatan])[0];
+    let monsterType = shuffle([Bat, Snake, Tank, Eater, Bones])[0];
     let monster = new monsterType(randomPassableTile());
     monsters.push(monster);
 }
