@@ -7,7 +7,6 @@ function tryTo(description, callback){
   throw 'Timeout while trying to '+description;
 }
 
-
 function randomRange(min, max){
   return Math.floor(Math.random()*(max-min+1))+min;
 }
@@ -21,4 +20,16 @@ function shuffle(arr){
         arr[r] = temp;
     }
     return arr;
+}
+
+function rightPad(textArray){
+  let finalText = "";
+  textArray.forEach(text => {
+    text+="";
+    for(let i=text.length;i<10;i++){
+        text+=" ";
+    }
+    finalText += text;
+  });
+  return finalText;
 }
