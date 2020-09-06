@@ -49,6 +49,12 @@ function tick(){
   if(player.dead){    
     gameState = "dead";
   }
+  spawnCounter--;
+  if(spawnCounter <= 0){  
+    spawnMonster();
+    spawnCounter = spawnRate;
+    spawnRate--;
+  }
 }
 
 function showTitle(){                                          
@@ -65,9 +71,11 @@ function startGame(){
     gameState = "running";
 }
 
-function startLevel(playerHp){                          
-    generateLevel();
+function startLevel(playerHp){
+  spawnRate = 15;
+  spawnCounter = spawnRate                
+  generateLevel();
 
-    player = new Player(randomPassableTile());
-    player.hp = playerHp;
+  player = new Player(randomPassableTile());
+  player.hp = playerHp;
 }
