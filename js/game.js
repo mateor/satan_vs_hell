@@ -9,6 +9,19 @@ function setupCanvas(){
     ctx.imageSmoothingEnabled = false;
 }
 
+function drawText(text, size, centered, textY, color){
+    ctx.fillStyle = color;
+    ctx.font = size + "px monospace";
+    let textX;
+    if(centered){
+        textX = (canvas.width-ctx.measureText(text).width)/2;
+    }else{
+        textX = canvas.width-uiWidth*tileSize+25;
+    }
+
+    ctx.fillText(text, textX, textY);
+}
+
 function drawSprite(sprite, x, y){
     ctx.drawImage(
         spritesheet,
@@ -35,6 +48,7 @@ function draw(){
         monsters[i].draw();
     }
     player.draw();
+    drawText("Level: "+level, 30, false, 40, "violet");
   }
 }
 
@@ -62,6 +76,9 @@ function showTitle(){
     ctx.fillRect(0,0,canvas.width, canvas.height);
 
     gameState = "title";
+    drawText("SATAN", 70, true, canvas.height/2 - 110, "red");
+    drawText("vs", 40, true, canvas.height/2 - 70, "white");
+    drawText("HELL!", 70, true, canvas.height/2 - 10, "red"); 
 }
 
 function startGame(){                                           
@@ -78,4 +95,5 @@ function startLevel(playerHp){
 
   player = new Player(randomPassableTile());
   player.hp = playerHp;
+  randomPassableTile().replace(Exit);
 }

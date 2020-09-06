@@ -3,12 +3,14 @@ class Monster{
         this.move(tile);
         this.sprite = sprite;
         this.hp = hp;
+        this.teleportCounter = 2;
   }
   heal(damage){
       this.hp = Math.min(maxHp, this.hp+damage);
   }
   update(){
-    if(this.stunned){
+    this.teleportCounter--;
+    if(this.stunned || this.teleportCounter > 0){                       
       this.stunned = false;
       return;
     }
@@ -21,22 +23,26 @@ class Monster{
      neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
 
      if(neighbors.length){
-         neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
-         let newTile = neighbors[0];
-         this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+       neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+       let newTile = neighbors[0];
+       this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
      }
   }
 
   draw(){
-    drawSprite(this.sprite, this.tile.x, this.tile.y);
-    this.drawHp();
+    if(this.teleportCounter > 0){                                        
+      drawSprite(10, this.tile.x, this.tile.y);                     
+    }else{  
+      drawSprite(this.sprite, this.tile.x, this.tile.y);
+      this.drawHp();
+    }
   }
   drawHp(){
     for(let i=0; i<this.hp; i++){
       drawSprite(
-          9,
-          this.tile.x + (i%3)*(5/16),
-          this.tile.y - Math.floor(i/3)*(5/16)
+        9,
+        this.tile.x + (i%3)*(5/16),
+        this.tile.y - Math.floor(i/3)*(5/16)
       );
     }
   }
@@ -75,6 +81,7 @@ class Monster{
       }
       this.tile = tile;
       tile.monster = this;
+      tile.stepOn(this);
   }
 }
 
@@ -82,6 +89,7 @@ class Player extends Monster{
     constructor(tile){
         super(tile, 0, 3);
         this.isPlayer = true;
+        this.teleportCounter = 0;
     }
     tryMove(dx, dy){
         if(super.tryMove(dx,dy)){
