@@ -3,9 +3,12 @@ There is a traitor in Hell.
 
 Satan takes on all of Pandemonium in the fight to regain his unholy throne!
 
+A Roguelike or Broughlike or whatever!
+# [Play here](https://mateor.github.io/satan_vs_hell)
+
 ![Game1](img/game1.png)
 ![Game2](img/game2.png)
-A Roguelike or Broughlike or whatever!
+
 ### Playing
 Kill demons with Satan's unholy wrath. Gather arcane treasures to wield dark magics.
 
@@ -22,9 +25,7 @@ Kill, learn, die, repeat.
 
 
 ### Running the Game
-Download this repo and open the `index.html` in your favorite browser.
-
-Hosted website possibly incoming.
+[Play the game online](https://mateor.github.io/satan_vs_hell/) or download this repo and open `index.html` in your favorite browser.
 
 ### Credits
 * Game Design and code ported from @nluqo's [great Broughlike](https://nluqo.github.io/broughlike-tutorial)
