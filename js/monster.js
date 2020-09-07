@@ -143,7 +143,9 @@ class Player extends Monster{
       spells[spellName]();
       playSound("spell");
       // Optionally remove tick if prefer monsters to not act immediately after spell.
-      // tick();
+      // NOTE: WOuld require update to corpse management, since the tick is where the monsters delete themselves.
+      // Otherwise, you will see dead monsters drop Satan's corpse until next tick.
+      tick();
     }
   }
 }
