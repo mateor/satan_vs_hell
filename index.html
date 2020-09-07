@@ -38,7 +38,7 @@
     shakeAmount = 0;       
     shakeX = 0;                 
     shakeY = 0
-    
+
     document.querySelector("html").onkeypress = function(e){
       if(gameState == "title"){                              
           startGame();                
@@ -49,6 +49,7 @@
         if(e.key=="s") player.tryMove(0, 1);
         if(e.key=="a") player.tryMove(-1, 0);
         if(e.key=="d") player.tryMove(1, 0);
+        if(e.key>=1 && e.key<=9) player.castSpell(e.key-1);
       }
     };
 
