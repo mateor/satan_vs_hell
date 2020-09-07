@@ -5,8 +5,8 @@ function generateLevel(){
 
   generateMonsters();
 
-  for(let i=0;i<3;i++){                                         
-    randomPassableTile().treasure = true;                            
+  for(let i=0;i<3;i++){
+    randomPassableTile().treasure = true;
   }
 }
 
@@ -52,15 +52,15 @@ function randomPassableTile(){
 }
 
 function generateMonsters(){
-    monsters = [];
-    let numMonsters = level+1;
-    for(let i=0;i<numMonsters;i++){
-        spawnMonster();
-    }
+  monsters = [];
+  let numMonsters = level+1;
+  for(let i=0;i<numMonsters;i++){
+    spawnMonster();
+  }
 }
 
 function spawnMonster(){
-    let monsterType = shuffle([Bat, Snake, Tank, Eater, Bones])[0];
-    let monster = new monsterType(randomPassableTile());
-    monsters.push(monster);
+  let monsterType = shuffle([Bat, Snake, Tank, Eater, Bones])[0];
+  let monster = new monsterType(randomPassableTile());
+  monsters.push(monster);
 }

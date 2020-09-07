@@ -1,52 +1,51 @@
 function setupCanvas(){
-    canvas = document.querySelector("canvas");
-    ctx = canvas.getContext("2d");
+  canvas = document.querySelector("canvas");
+  ctx = canvas.getContext("2d");
 
-    canvas.width = tileSize*(numTiles+uiWidth);
-    canvas.height = tileSize*numTiles;
-    canvas.style.width = canvas.width + 'px';
-    canvas.style.height = canvas.height + 'px';
-    ctx.imageSmoothingEnabled = false;
+  canvas.width = tileSize*(numTiles+uiWidth);
+  canvas.height = tileSize*numTiles;
+  canvas.style.width = canvas.width + 'px';
+  canvas.style.height = canvas.height + 'px';
+  ctx.imageSmoothingEnabled = false;
 }
 
 function drawText(text, size, centered, textY, color){
-    ctx.fillStyle = color;
-    ctx.font = size + "px monospace";
-    let textX;
-    if(centered){
-        textX = (canvas.width-ctx.measureText(text).width)/2;
-    }else{
-        textX = canvas.width-uiWidth*tileSize+25;
-    }
-
-    ctx.fillText(text, textX, textY);
+  ctx.fillStyle = color;
+  ctx.font = size + "px monospace";
+  let textX;
+  if(centered){
+    textX = (canvas.width-ctx.measureText(text).width)/2;
+  }else{
+    textX = canvas.width-uiWidth*tileSize+25;
+  }
+  ctx.fillText(text, textX, textY);
 }
 
 function drawSprite(sprite, x, y){
-    ctx.drawImage(
-        spritesheet,
-        sprite*16,
-        0,
-        16,
-        16,
-        x*tileSize + shakeX,
-        y*tileSize + shakeY,
-        tileSize,
-        tileSize
-    );
+  ctx.drawImage(
+    spritesheet,
+    sprite*16,
+    0,
+    16,
+    16,
+    x*tileSize + shakeX,
+    y*tileSize + shakeY,
+    tileSize,
+    tileSize,
+  );
 }
 
 function screenshake(){
-    if(shakeAmount){
-        shakeAmount--;
-    }
-    let shakeAngle = Math.random()*Math.PI*2;
-    shakeX = Math.round(Math.cos(shakeAngle)*shakeAmount);
-    shakeY = Math.round(Math.sin(shakeAngle)*shakeAmount);
+  if(shakeAmount){
+    shakeAmount--;
+  }
+  let shakeAngle = Math.random()*Math.PI*2;
+  shakeX = Math.round(Math.cos(shakeAngle)*shakeAmount);
+  shakeY = Math.round(Math.sin(shakeAngle)*shakeAmount);
 }
 
 function draw(){
-  if(gameState == "running" || gameState == "dead"){  
+  if(gameState == "running" || gameState == "dead"){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     screenshake()
     for(let i=0;i<numTiles;i++){
@@ -61,8 +60,8 @@ function draw(){
     drawText("Level: "+level, 30, false, 40, "violet");
     drawText("Score: "+score, 30, false, 70, "violet");
     for(let i=0; i<player.spells.length; i++){
-      let spellText = (i+1) + ") " + (player.spells[i] || "");                        
-      drawText(spellText, 20, false, 110+i*40, "aqua");        
+      let spellText = (i+1) + ") " + (player.spells[i] || "");
+      drawText(spellText, 20, false, 110+i*40, "aqua");
     }
   }
 }
@@ -75,7 +74,7 @@ function tick(){
       monsters.splice(k,1);
     }
   }
-  
+
   player.update();
 
   if(player.dead){
@@ -83,37 +82,36 @@ function tick(){
     gameState = "dead";
   }
   spawnCounter--;
-  if(spawnCounter <= 0){  
+  if(spawnCounter <= 0){
     spawnMonster();
     spawnCounter = spawnRate;
     spawnRate--;
   }
 }
 
-function showTitle(){                                          
-    ctx.fillStyle = 'rgba(0,0,0,.75)';
-    ctx.fillRect(0,0,canvas.width, canvas.height);
+function showTitle(){
+  ctx.fillStyle = 'rgba(0,0,0,.75)';
+  ctx.fillRect(0,0,canvas.width, canvas.height);
 
-    gameState = "title";
-    drawText("SATAN", 70, true, canvas.height/2 - 140, "red");
-    drawText("vs", 40, true, canvas.height/2 - 100, "white");
-    drawText("HELL!", 70, true, canvas.height/2 - 40, "red"); 
+  gameState = "title";
+  drawText("SATAN", 70, true, canvas.height/2 - 140, "red");
+  drawText("vs", 40, true, canvas.height/2 - 100, "white");
+  drawText("HELL!", 70, true, canvas.height/2 - 40, "red"); 
 
-    drawScores();
+  drawScores();
 }
 
-function startGame(){                                           
-    level = 1;
-    score = 0;
-    numSpells = 1;
-    startLevel(startingHp);
+function startGame(){
+  score = 0;
+  numSpells = 1;
+  startLevel(startingHp);
 
-    gameState = "running";
+  gameState = "running";
 }
 
-function startLevel(playerHp, playerSpells){   
+function startLevel(playerHp, playerSpells){
   spawnRate = 15;
-  spawnCounter = spawnRate                
+  spawnCounter = spawnRate
   generateLevel();
 
   player = new Player(randomPassableTile());
@@ -179,17 +177,17 @@ function drawScores(){
   }
 }
 
-function initSounds(){          
-    sounds = {
-        hit1: new Audio('sounds/hit1.wav'),
-        hit2: new Audio('sounds/hit2.wav'),
-        treasure: new Audio('sounds/treasure.wav'),
-        newLevel: new Audio('sounds/newLevel.wav'),
-        spell: new Audio('sounds/spell.wav'),
-    };
+function initSounds(){
+  sounds = {
+    hit1: new Audio('sounds/hit1.wav'),
+    hit2: new Audio('sounds/hit2.wav'),
+    treasure: new Audio('sounds/treasure.wav'),
+    newLevel: new Audio('sounds/newLevel.wav'),
+    spell: new Audio('sounds/spell.wav'),
+  };
 }
 
-function playSound(soundName){                       
-    sounds[soundName].currentTime = 0;  
+function playSound(soundName){
+    sounds[soundName].currentTime = 0;
     sounds[soundName].play();
 }

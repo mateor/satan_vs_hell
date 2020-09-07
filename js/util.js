@@ -12,14 +12,14 @@ function randomRange(min, max){
 }
 
 function shuffle(arr){
-    let temp, r;
-    for (let i = 1; i < arr.length; i++) {
-        r = randomRange(0,i);
-        temp = arr[i];
-        arr[i] = arr[r];
-        arr[r] = temp;
-    }
-    return arr;
+  let temp, r;
+  for (let i = 1; i < arr.length; i++) {
+    r = randomRange(0,i);
+    temp = arr[i];
+    arr[i] = arr[r];
+    arr[r] = temp;
+  }
+  return arr;
 }
 
 function rightPad(textArray){

@@ -4,17 +4,17 @@ class Monster{
     this.sprite = sprite;
     this.hp = hp;
     this.teleportCounter = 2;
-    this.offsetX = 0;                                                   
+    this.offsetX = 0;
     this.offsetY = 0;
     this.lastMove = [-1,0];
     this.bonusAttack = 0;
   }
   heal(damage){
-      this.hp = Math.min(maxHp, this.hp+damage);
+    this.hp = Math.min(maxHp, this.hp+damage);
   }
   update(){
     this.teleportCounter--;
-    if(this.stunned || this.teleportCounter > 0){                       
+    if(this.stunned || this.teleportCounter > 0){
       this.stunned = false;
       return;
     }
@@ -22,28 +22,28 @@ class Monster{
   }
 
   doStuff(){
-     let neighbors = this.tile.getAdjacentPassableNeighbors();
-     
-     neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
+   let neighbors = this.tile.getAdjacentPassableNeighbors();
 
-     if(neighbors.length){
-       neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
-       let newTile = neighbors[0];
-       this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
+   neighbors = neighbors.filter(t => !t.monster || t.monster.isPlayer);
+
+   if(neighbors.length){
+     neighbors.sort((a,b) => a.dist(player.tile) - b.dist(player.tile));
+     let newTile = neighbors[0];
+     this.tryMove(newTile.x - this.tile.x, newTile.y - this.tile.y);
      }
   }
-  getDisplayX(){                     
+  getDisplayX(){
     return this.tile.x + this.offsetX;
   }
 
-  getDisplayY(){                                                                  
+  getDisplayY(){
     return this.tile.y + this.offsetY;
   }
 
   draw(){
-    if(this.teleportCounter > 0){                                        
-      drawSprite(10, this.getDisplayX(),  this.getDisplayY());
-    }else{  
+    if(this.teleportCounter > 0){
+      drawSprite(10, this.getDisplayX(), this.getDisplayY());
+    }else{
       drawSprite(this.sprite, this.getDisplayX(),  this.getDisplayY());
       this.drawHp();
     }
@@ -55,7 +55,7 @@ class Monster{
     for(let i=0; i<this.hp; i++){
       drawSprite(
         9,
-        this.getDisplayX() + (i%3)*(5/16), 
+        this.getDisplayX() + (i%3)*(5/16),
         this.getDisplayY() - Math.floor(i/3)*(5/16)
       );
     }
@@ -76,25 +76,25 @@ class Monster{
 
           shakeAmount = 5;
 
-          this.offsetX = (newTile.x - this.tile.x)/2;         
-          this.offsetY = (newTile.y - this.tile.y)/2;    
+          this.offsetX = (newTile.x - this.tile.x)/2;
+          this.offsetY = (newTile.y - this.tile.y)/2;
         }
       }
      return true;
     }
   }
   hit(damage){
-    if(this.shield>0){           
-        return;                                                             
+    if(this.shield>0){
+        return;
     }
     this.hp -= damage;
     if(this.hp <= 0){
       this.die();
     }
-    if(this.isPlayer){                                                     
-      playSound("hit1");                                              
-    }else{                                                       
-      playSound("hit2");                                              
+    if(this.isPlayer){
+      playSound("hit1");
+    }else{
+      playSound("hit2");
     }
   }
 
@@ -105,14 +105,14 @@ class Monster{
   }
 
   move(tile){
-      if(this.tile){
-          this.tile.monster = null;
-          this.offsetX = this.tile.x - tile.x;    
-          this.offsetY = this.tile.y - tile.y;
-      }
-      this.tile = tile;
-      tile.monster = this;
-      tile.stepOn(this);
+    if(this.tile){
+      this.tile.monster = null;
+      this.offsetX = this.tile.x - tile.x;
+      this.offsetY = this.tile.y - tile.y;
+    }
+    this.tile = tile;
+    tile.monster = this;
+    tile.stepOn(this);
   }
 }
 
@@ -123,87 +123,87 @@ class Player extends Monster{
     this.teleportCounter = 0;
     this.spells = shuffle(Object.keys(spells)).splice(0,numSpells);
   }
-  update(){          
-    this.shield--;                                                      
+  update(){
+    this.shield--;
   }
   tryMove(dx, dy){
     if(super.tryMove(dx,dy)){
       tick();
     }
   }
-  addSpell(){                                                       
+  addSpell(){
     let newSpell = shuffle(Object.keys(spells))[0];
     this.spells.push(newSpell);
   }
 
-  castSpell(index){                                                   
+  castSpell(index){
     let spellName = this.spells[index];
     if(spellName){
       delete this.spells[index];
       spells[spellName]();
       playSound("spell");
       // Optionally remove tick if prefer monsters to not act immediately after spell.
-      tick();
+      // tick();
     }
   }
 }
 
 class Bat extends Monster{
-    constructor(tile){
-        super(tile, 4, 3);
-    }
+  constructor(tile){
+    super(tile, 4, 3);
+  }
 }
 
 class Tank extends Monster{
-    constructor(tile){
-        super(tile, 5, 2);
+  constructor(tile){
+    super(tile, 5, 2);
+  }
+  update(){
+    let startedStunned = this.stunned;
+    super.update();
+    if(!startedStunned){
+      this.stunned = true;
     }
-    update(){
-        let startedStunned = this.stunned;
-        super.update();
-        if(!startedStunned){
-            this.stunned = true;
-        }
-    }
+  }
 }
 
 class Eater extends Monster{
-    constructor(tile){
-        super(tile, 6, 1);
+  constructor(tile){
+    super(tile, 6, 1);
+  }
+  doStuff(){
+    let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
+    if(neighbors.length){
+      neighbors[0].replace(Floor);
+      this.heal(0.5);
+    }else{
+      super.doStuff();
     }
-    doStuff(){
-        let neighbors = this.tile.getAdjacentNeighbors().filter(t => !t.passable && inBounds(t.x,t.y));
-        if(neighbors.length){
-            neighbors[0].replace(Floor);
-            this.heal(0.5);
-        }else{
-            super.doStuff();
-        }
-    }
+  }
 }
 
 class Snake extends Monster{
-    constructor(tile){
-        super(tile, 7, 1);
-    }
-    doStuff(){
-        this.attackedThisTurn = false;
-        super.doStuff();
+  constructor(tile){
+    super(tile, 7, 1);
+  }
+  doStuff(){
+    this.attackedThisTurn = false;
+    super.doStuff();
 
-        if(!this.attackedThisTurn){
-            super.doStuff();
-        }
+    if(!this.attackedThisTurn){
+      super.doStuff();
     }
+  }
 }
 
 class Bones extends Monster{
-    constructor(tile){
-        super(tile, 8, 2);
+  constructor(tile){
+      super(tile, 8, 2);
+  }
+  doStuff(){
+    let neighbors = this.tile.getAdjacentPassableNeighbors();
+    if(neighbors.length){
+        this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
     }
-    doStuff(){
-        let neighbors = this.tile.getAdjacentPassableNeighbors();
-        if(neighbors.length){
-            this.tryMove(neighbors[0].x - this.tile.x, neighbors[0].y - this.tile.y);
-        }
-    }
+  }
 }
